@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DryIoc, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DryIoc.dll.3.0.1\lib\net45\DryIoc.dll</HintPath>
@@ -128,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Screenshots\BooksRaffle_201901212152.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="App.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

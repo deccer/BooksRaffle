@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BooksRaffle.ViewModels"
-    Title="MainWindow"
+    Title="BooksRaffle"
     Width="1024"
     Height="768"
     d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
@@ -73,10 +73,13 @@
                     VerticalAlignment="Center"
                     Text="{Binding BookmarkTags, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
-                    Width="120"
                     Margin="0,8,8,8"
                     Command="{Binding AddBookmarkCommand}"
-                    Content="Add Bookmark" />
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Canvas Width="24" Height="24">
+                        <Path Data="M17,3A2,2 0 0,1 19,5V21L12,18L5,21V5C5,3.89 5.9,3 7,3H17M11,7V9H9V11H11V13H13V11H15V9H13V7H11Z" Fill="Crimson" />
+                    </Canvas>
+                </Button>
             </StackPanel>
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding FilteredBookmarks}">
@@ -105,6 +108,8 @@
                                     Grid.Row="0"
                                     Grid.Column="2"
                                     Margin="8,8,8,8"
+                                    FontSize="18"
+                                    FontWeight="Bold"
                                     Text="{Binding Site}" />
                                 <TextBlock
                                     Grid.Row="1"
@@ -139,10 +144,14 @@
                                 <Button
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    Margin="8,8,8,8"
+                                    Margin="0,8,8,8"
                                     Command="{Binding Path=RemoveBookmarkCommand, Source={StaticResource MainViewModel}}"
                                     CommandParameter="{Binding}"
-                                    Content="Remove" />
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Data="M17,3A2,2 0 0,1 19,5V21L12,18L5,21V5C5,3.89 5.9,3 7,3H17M8.17,8.58L10.59,11L8.17,13.41L9.59,14.83L12,12.41L14.41,14.83L15.83,13.41L13.41,11L15.83,8.58L14.41,7.17L12,9.58L9.59,7.17L8.17,8.58Z" Fill="Crimson" />
+                                    </Canvas>
+                                </Button>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

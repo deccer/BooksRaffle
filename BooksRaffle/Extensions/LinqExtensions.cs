@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BookmarksRaffle.Extensions
+namespace BooksRaffle.Extensions
 {
     public static class LinqExtensions
     {

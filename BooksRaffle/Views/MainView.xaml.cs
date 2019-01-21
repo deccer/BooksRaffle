@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using BooksRaffle.ViewModels;
 
-namespace BookmarksRaffle.Views
+namespace BooksRaffle.Views
 {
     public partial class MainView : Window
     {

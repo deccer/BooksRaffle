@@ -1,6 +1,7 @@
 ﻿using System.Windows;
-using BookmarksRaffle.Views;
+using BooksRaffle.Data;
 using BooksRaffle.ViewModels;
+using BooksRaffle.Views;
 using DryIoc;
 
 namespace BooksRaffle
@@ -10,7 +11,8 @@ namespace BooksRaffle
         private static IContainer CreateContainer()
         {
             var container  = new Container();
-            container.Register<MainViewModel>();
+            container.Register<IBookmarksContextFactory, BookmarksContextFactory>();
+            container.Register<MainViewModel>(Made.Of(() => new MainViewModel(Arg.Of<IBookmarksContextFactory>())));
             container.Register<MainView>(Made.Of(() => new MainView(Arg.Of<MainViewModel>())));
             return container;
         }

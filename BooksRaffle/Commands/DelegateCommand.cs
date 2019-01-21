@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace BookmarksRaffle.Commands
+namespace BooksRaffle.Commands
 {
     public class DelegateCommand : ICommand
     {

@@ -1,21 +1,19 @@
-﻿using System;
+﻿using BooksRaffle.Commands;
+using BooksRaffle.Data;
+using BooksRaffle.Extensions;
+using BooksRaffle.Models;
+using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using BookmarksRaffle.Commands;
-using BookmarksRaffle.Data;
-using BookmarksRaffle.Extensions;
-using BooksRaffle.Models;
-using Bookmark = BooksRaffle.Models.Bookmark;
-using Tag = BooksRaffle.Models.Tag;
 
 namespace BooksRaffle.ViewModels
 {
     public class MainViewModel : ViewModel
     {
+        private readonly IBookmarksContextFactory _bookmarksContextFactory;
         private string _filterText;
         private string _bookmarkUrl;
         private string _bookmarkTags;
@@ -71,85 +69,96 @@ namespace BooksRaffle.ViewModels
 
         public ICommand RemoveBookmarkCommand { get; }
 
+        [UsedImplicitly]
         public MainViewModel()
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+
+        }
+
+        public MainViewModel([NotNull] IBookmarksContextFactory bookmarksContextFactory)
+        {
+            _bookmarksContextFactory = bookmarksContextFactory ?? throw new ArgumentNullException(nameof(bookmarksContextFactory));
+
+            if (IsDesignMode)
             {
                 LoadBookmarks();
             }
 
-            AddBookmarkCommand = new DelegateCommand(() =>
+            AddBookmarkCommand = new DelegateCommand(AddBookmark);
+            RemoveBookmarkCommand = new DelegateCommand<Bookmark>(RemoveBookmark);
+        }
+
+        private void AddBookmark()
+        {
+            if (string.IsNullOrEmpty(BookmarkUrl))
             {
-                if (string.IsNullOrEmpty(BookmarkUrl))
-                {
-                    return;
-                }
+                return;
+            }
 
-                using (var db = new BookmarksContext())
-                {
-                    var bookmark = db.Bookmarks.FirstOrDefault(bm => bm.Url == BookmarkUrl);
-                    if (bookmark == null)
-                    {
-                        if (!Uri.TryCreate(BookmarkUrl, UriKind.RelativeOrAbsolute, out var uri))
-                        {
-                            return;
-                        }
-
-                        bookmark = new Bookmark
-                        {
-                            CreatedDate = DateTime.Now,
-                            Site = uri.Host,
-                            Url = uri.ToString()
-                        };
-
-                    }
-
-                    if (!string.IsNullOrEmpty(BookmarkTags))
-                    {
-                        var tagNames = BookmarkTags.Split(' ');
-                        if (tagNames.Length > 0)
-                        {
-                            var tags = db.Tags.Where(tag => tagNames.Contains(tag.Name)).ToList()
-                                .Union(tagNames.Select(tagName => new Tag { Name = tagName })).DistinctBy(tag => tag.Name);
-                            bookmark.BookmarkTags.Clear();
-                            foreach (var tag in tags)
-                            {
-                                bookmark.BookmarkTags.Add(new BookmarkTag { Bookmark = bookmark, Tag = tag });
-                            }
-                        }
-                    }
-
-                    db.Bookmarks.Add(bookmark);
-                    db.SaveChanges();
-
-                    BookmarkUrl = string.Empty;
-                    BookmarkTags = string.Empty;
-                }
-                LoadBookmarks();
-
-            });
-            RemoveBookmarkCommand = new DelegateCommand<Bookmark>(bookmark =>
+            using (var db = _bookmarksContextFactory.CreateBookmarksContext())
             {
-                using (var db = new BookmarksContext())
+                var bookmark = db.Bookmarks.FirstOrDefault(bm => bm.Url == BookmarkUrl);
+                if (bookmark == null)
                 {
-                    var bm = db.Bookmarks.FirstOrDefault(b => b.Id == bookmark.Id);
-                    if (bm != null)
+                    if (!Uri.TryCreate(BookmarkUrl, UriKind.RelativeOrAbsolute, out var uri))
                     {
-                        db.Bookmarks.Remove(bm);
+                        return;
                     }
-                    db.SaveChanges();
+
+                    bookmark = new Bookmark
+                    {
+                        CreatedDate = DateTime.Now,
+                        Site = uri.Host,
+                        Url = uri.ToString()
+                    };
+
                 }
-                LoadBookmarks();
-            });
+
+                if (!string.IsNullOrEmpty(BookmarkTags))
+                {
+                    var tagNames = BookmarkTags.Split(' ');
+                    if (tagNames.Length > 0)
+                    {
+                        var tags = db.Tags.Where(tag => tagNames.Contains(tag.Name)).ToList()
+                            .Union(tagNames.Select(tagName => new Tag { Name = tagName })).DistinctBy(tag => tag.Name);
+                        bookmark.BookmarkTags.Clear();
+                        foreach (var tag in tags)
+                        {
+                            bookmark.BookmarkTags.Add(new BookmarkTag { Bookmark = bookmark, Tag = tag });
+                        }
+                    }
+                }
+
+                db.Bookmarks.Add(bookmark);
+                db.SaveChanges();
+
+                BookmarkUrl = string.Empty;
+                BookmarkTags = string.Empty;
+            }
+            LoadBookmarks();
         }
 
         private void LoadBookmarks()
         {
-            using (var db = new BookmarksContext())
+            using (var db = _bookmarksContextFactory.CreateBookmarksContext())
             {
                 Bookmarks = new ObservableCollection<Bookmark>(db.Bookmarks.Include("BookmarkTags.Tag").ToList());
                 OnPropertyChanged(nameof(FilteredBookmarks));
             }
+        }
+
+        private void RemoveBookmark(Bookmark bookmark)
+        {
+            using (var db = _bookmarksContextFactory.CreateBookmarksContext())
+            {
+                var bm = db.Bookmarks.FirstOrDefault(b => b.Id == bookmark.Id);
+                if (bm != null)
+                {
+                    db.Bookmarks.Remove(bm);
+                }
+                db.SaveChanges();
+            }
+            LoadBookmarks();
         }
     }
 }

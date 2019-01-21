@@ -1,13 +1,14 @@
 ﻿using System.Data.Entity;
 using BooksRaffle.Models;
-using Bookmark = BooksRaffle.Models.Bookmark;
-using Tag = BooksRaffle.Models.Tag;
 
-namespace BookmarksRaffle.Data
+namespace BooksRaffle.Data
 {
-    public class BookmarksContext : DbContext
+    public class BookmarksContext : DbContext, IBookmarksContext
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public DbSet<Bookmark> Bookmarks { get; set; }
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public DbSet<Tag> Tags { get; set; }
 
         public BookmarksContext()

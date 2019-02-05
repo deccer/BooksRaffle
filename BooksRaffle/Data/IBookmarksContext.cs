@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Data.Entity;
 using BooksRaffle.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BooksRaffle.Data
 {

@@ -21,6 +21,9 @@ namespace BooksRaffle
         {
             base.OnStartup(e);
 
+
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlite3());
+
             var container = CreateContainer();
 
             var mainView = container.Resolve<MainView>();

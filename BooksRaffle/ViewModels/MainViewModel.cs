@@ -3,6 +3,7 @@ using BooksRaffle.Data;
 using BooksRaffle.Extensions;
 using BooksRaffle.Models;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -119,8 +120,10 @@ namespace BooksRaffle.ViewModels
                     var tagNames = BookmarkTags.Split(' ');
                     if (tagNames.Length > 0)
                     {
-                        var tags = db.Tags.Where(tag => tagNames.Contains(tag.Name)).ToList()
-                            .Union(tagNames.Select(tagName => new Tag { Name = tagName })).DistinctBy(tag => tag.Name);
+                        var tags = db.Tags.Where(tag => tagNames.Contains(tag.Name))
+                            .ToList()
+                            .Union(tagNames.Select(tagName => new Tag { Name = tagName }))
+                            .DistinctBy(tag => tag.Name);
                         bookmark.BookmarkTags.Clear();
                         foreach (var tag in tags)
                         {

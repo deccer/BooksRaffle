@@ -1,4 +1,6 @@
 # BooksRaffle
+[![Build Status](https://travis-ci.org/deccer/BooksRaffle.svg?branch=master)](https://travis-ci.org/deccer/BooksRaffle)
+
 Example WPF Application
 
 ![screenshot 2][screenshot2]
